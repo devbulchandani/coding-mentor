@@ -6,6 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Entity
 @Table(name = "learning_plans")
 @Getter
@@ -21,20 +24,29 @@ public class LearningPlan {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    private String tech;
+
+    @Column(nullable = false)
     private String projectName;
 
     private String projectDescription;
 
-    private String durationDays;
+    @Column(nullable = false)
+    private int durationDays;
 
+    @Column(nullable = false)
     private String skillLevel;
 
     private String projectPath;
 
+    @OneToMany(mappedBy = "learningPlan", cascade = CascadeType.ALL)
+    private List<Milestone> milestones;
+
     @CreationTimestamp
-    private String createdAt;
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
 }
