@@ -1,4 +1,4 @@
-package org.devbulchandani.backend.config;
+package org.devbulchandani.backend.controllers;
 
 import org.devbulchandani.backend.dtos.ChatRequest;
 import org.devbulchandani.backend.dtos.MentorBot;
@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/chat")

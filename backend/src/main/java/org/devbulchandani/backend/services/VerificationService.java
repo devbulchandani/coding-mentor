@@ -23,7 +23,7 @@ public class VerificationService {
         this.planContext = planContext;
     }
 
-    public String verifyMilestone(Long milestoneId){
+    public String verifyMilestone(Long milestoneId, String repoUrl) {
         Milestone m = milestoneRepo.findById(milestoneId)
                 .orElseThrow();
 
@@ -31,22 +31,35 @@ public class VerificationService {
 
 
         String prompt = """
-        You are reviewing the user's progress.
-
-        %s
-
-        %s
-
-        Using the actual code you can read via MCP tools,
-        decide whether this milestone is COMPLETE.
-
-        If complete, start your answer with: COMPLETED and commend the user's progress and explain its significance
-        Otherwise, explain what is still missing (Socratically, no code).
-        """
+                You are reviewing the user's progress.
+                
+                GITHUB REPO:
+                %s
+                
+                IMPORTANT INSTRUCTION:
+                Before judging, you MAY use MCP tools to:
+                - get_project_structure(...)
+                - read_file(...)
+                - read_files(...)
+                
+                
+                Only after inspecting the code, decide whether this milestone is COMPLETE.
+                
+                === LEARNING PLAN ===
+                %s
+                
+                === CURRENT MILESTONE ===
+                %s
+                
+                If complete, start your answer with: COMPLETED and briefly explain why.
+                Otherwise, explain what is still missing (Socratically, no code).
+                """
                 .formatted(
+                        repoUrl,
                         planContext.buildPlanContext(plan),
                         milestoneContext.buildMilestoneContext(m)
                 );
+
 
         String aiResponse = mentorBot.chat(prompt);
 

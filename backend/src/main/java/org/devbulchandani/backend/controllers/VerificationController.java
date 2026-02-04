@@ -1,10 +1,8 @@
 package org.devbulchandani.backend.controllers;
 
+import org.devbulchandani.backend.dtos.VerifyRequest;
 import org.devbulchandani.backend.services.VerificationService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -18,11 +16,12 @@ public class VerificationController {
     }
 
     @PostMapping("/{milestoneId}")
-    public Map<String, Object> verify(@PathVariable Long milestoneId) {
+    public Map<String, Object> verify(@PathVariable Long milestoneId, @RequestBody VerifyRequest req) {
 
-        String aiFeedback = verificationService.verifyMilestone(milestoneId);
+        String aiFeedback = verificationService.verifyMilestone(milestoneId, req.repoUrl());
 
         return Map.of(
+                "completed", aiFeedback.contains("COMPLETED"),
                 "feedback", aiFeedback,
                 "milestoneId", milestoneId
         );
