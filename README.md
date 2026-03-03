@@ -2,6 +2,7 @@
 
 **Your project-aware AI coding mentor that learns from your GitHub.**
 
+
 ---
 
 ## ✨ Overview
@@ -15,6 +16,7 @@ Buildpace AI is an **AI-powered, project-first learning mentor for developers**.
 * Live Socratic guidance inside your code editor or LLM
 
 Instead of measuring learning with quizzes, Buildpace AI measures progress using **your actual codebase**.
+
 
 ---
 
@@ -51,7 +53,6 @@ The AI:
 * Reads their repository via MCP
 * Checks whether milestone requirements are met
 * Either:
-
   * ✅ Approves the milestone, or
   * ❌ Rejects it with detailed, constructive feedback
 
@@ -76,6 +77,7 @@ It exposes tools such as:
 
 This gives your AI assistant full awareness of **what you’re building, where you are, and how to guide you—Socratically—while you code.**
 
+
 ---
 
 ## 🏗️ High-Level Architecture
@@ -87,7 +89,7 @@ Spring Boot Backend
         |
 Gemini 3 (Plan Generation)
         |
-Database (Postgres / MongoDB)
+Database (CloudSQL(MySql))
         |
 GitHub Repo
         |
@@ -95,6 +97,7 @@ repo_analyzer MCP  ---> Code Analysis
         |
 buildpace_mcp     ---> Context for LLM / Code Editor
 ```
+
 
 ---
 
@@ -128,12 +131,13 @@ buildpace_mcp     ---> Context for LLM / Code Editor
 
 ### Storage
 
-* PostgreSQL **or** MongoDB
+* CloudSQL(MySQL)
 
 ### Integrations
 
 * GitHub API
 * Custom Spring Boot Context APIs for MCP
+
 
 ---
 
@@ -175,9 +179,11 @@ cd buildpace_mcp
 node server.js
 ```
 
+
 ---
 
 ## 🎯 Demo Flow
+
 
 1. User creates a learning plan.
 2. User links a GitHub repository.
@@ -186,6 +192,7 @@ node server.js
 5. User requests milestone verification.
 6. AI approves or gives feedback.
 7. User adds `buildpace_mcp` to their code editor for live mentorship.
+
 
 ---
 
@@ -201,6 +208,7 @@ Unlike traditional platforms, Buildpace AI:
 
 👉 You’re not just learning to code — you’re learning to **build.**
 
+
 ---
 
 ## 🌱 Future Roadmap
@@ -211,11 +219,13 @@ Unlike traditional platforms, Buildpace AI:
 * Team learning mode
 * Analytics dashboard for progress tracking
 
+
 ---
 
 ## 🤝 Contributing
 
 Pull requests are welcome! Open an issue first to discuss major changes.
+
 
 ---
 
