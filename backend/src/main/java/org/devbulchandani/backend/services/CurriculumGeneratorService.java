@@ -3,6 +3,7 @@ package org.devbulchandani.backend.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.model.chat.ChatModel;
 import org.devbulchandani.backend.dtos.CurriculumResponse;
+import org.devbulchandani.backend.events.MilestoneNotesEvent;
 import org.devbulchandani.backend.models.LearningPlan;
 import org.devbulchandani.backend.models.Milestone;
 import org.devbulchandani.backend.models.User;
@@ -10,6 +11,7 @@ import org.devbulchandani.backend.repositories.LearningPlanRepository;
 import org.devbulchandani.backend.repositories.MilestoneRepository;
 import org.devbulchandani.backend.repositories.UserRepository;
 import org.devbulchandani.backend.utils.JwtUtil;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,20 +24,26 @@ public class CurriculumGeneratorService {
     private final MilestoneRepository milestoneRepo;
     private final UserRepository userRepo;
     private final JwtUtil jwtUtil;
+    private final ApplicationEventPublisher publisher;
 
 
-    public CurriculumGeneratorService(ChatModel gemini, LearningPlanRepository planRepo, MilestoneRepository milestoneRepo, UserRepository userrepo, JwtUtil jwtUtil) {
+    public CurriculumGeneratorService(ChatModel gemini, LearningPlanRepository planRepo, MilestoneRepository milestoneRepo, UserRepository userrepo, JwtUtil jwtUtil, ApplicationEventPublisher publisher) {
         this.gemini = gemini;
         this.planRepo = planRepo;
         this.milestoneRepo = milestoneRepo;
         this.userRepo = userrepo;
         this.jwtUtil = jwtUtil;
+        this.publisher = publisher;
     }
 
     public LearningPlan generatePlan(String token, String tech, int days, String skillLevel) {
         String prompt = buildPrompt(tech, days, skillLevel);
 
         String aiJson = gemini.chat(prompt);
+
+        aiJson = aiJson.replace("```json", "");
+        aiJson = aiJson.replace("```", "").trim();
+
         String email = jwtUtil.extractEmail(token);
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -55,6 +63,8 @@ public class CurriculumGeneratorService {
 
             plan = planRepo.save(plan);
 
+            Milestone firstMilestone = null;
+
             for (var m : response.milestones()) {
                 Milestone milestone = Milestone.builder()
                         .learningPlan(plan)
@@ -66,8 +76,15 @@ public class CurriculumGeneratorService {
                         .build();
 
                 milestoneRepo.save(milestone);
+
+                if (milestone.getSequenceNumber() == 1) {
+                    firstMilestone = milestone;
+                }
             }
             System.out.println("Plans: " + plan);
+            if (firstMilestone != null) {
+                publisher.publishEvent(new MilestoneNotesEvent(firstMilestone.getId(), ""));
+            }
 
             return plan;
 

@@ -1,49 +1,39 @@
 package org.devbulchandani.backend.models;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "learning_plans")
+@Table(name = "milestone_notes")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LearningPlan {
+public class MilestoneNotes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
-
-    private String tech;
-
-    @Column(nullable = false)
-    private String projectName;
+    @JoinColumn(name = "milestone_id", nullable = false)
+    @JsonIgnore
+    private Milestone milestone;
 
     @Column(columnDefinition = "TEXT")
-    private String projectDescription;
+    private String markdownContent;
 
     @Column(nullable = false)
-    private int durationDays;
+    @Enumerated(EnumType.STRING)
+    private NotesStatus status;
 
     @Column(nullable = false)
-    private String skillLevel;
-
-    private String githubUrl;
-
-    private String projectPath;
-
-    @OneToMany(mappedBy = "learningPlan", cascade = CascadeType.ALL)
-    private List<Milestone> milestones;
+    private int version = 1;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -51,5 +41,4 @@ public class LearningPlan {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
 }

@@ -1,7 +1,7 @@
 package org.devbulchandani.backend.controllers;
 
 import org.devbulchandani.backend.dtos.ChatRequest;
-import org.devbulchandani.backend.dtos.MentorBot;
+import org.devbulchandani.backend.bots.MentorBot;
 import org.devbulchandani.backend.models.LearningPlan;
 import org.devbulchandani.backend.repositories.LearningPlanRepository;
 import org.devbulchandani.backend.services.LearningContextService;

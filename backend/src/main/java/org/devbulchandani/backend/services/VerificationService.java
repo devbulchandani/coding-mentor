@@ -1,6 +1,6 @@
 package org.devbulchandani.backend.services;
 
-import org.devbulchandani.backend.dtos.MentorBot;
+import org.devbulchandani.backend.bots.MentorBot;
 import org.devbulchandani.backend.models.LearningPlan;
 import org.devbulchandani.backend.models.Milestone;
 import org.devbulchandani.backend.repositories.LearningPlanRepository;

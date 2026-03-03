@@ -1,4 +1,4 @@
-package org.devbulchandani.backend.dtos;
+package org.devbulchandani.backend.bots;
 
 import dev.langchain4j.service.SystemMessage;
 
