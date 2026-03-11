@@ -5,7 +5,7 @@ import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.service.AiServices;
 import org.devbulchandani.backend.bots.MentorBot;
-import org.devbulchandani.backend.bots.NotesGeneratorBot;
+import org.devbulchandani.backend.bots.NotesGenerationBot;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +24,13 @@ public class SocraticMentorConfiguration {
     }
 
     @Bean
-    public NotesGeneratorBot notesGeneratorBot(@Qualifier("gemini2") ChatModel gemini) {
-        return AiServices.builder(NotesGeneratorBot.class)
-                .chatModel(gemini)
+    public NotesGenerationBot notesBot(
+            @Qualifier("gemini2") ChatModel gemini2,
+            McpToolProvider repoToolProvider) {
+
+        return AiServices.builder(NotesGenerationBot.class)
+                .chatModel(gemini2)
+                .toolProvider(repoToolProvider)
                 .build();
     }
-
 }

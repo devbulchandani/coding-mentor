@@ -2,9 +2,8 @@ package org.devbulchandani.backend.bots;
 
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
-import dev.langchain4j.service.V;
 
-public interface NotesGeneratorBot {
+public interface NotesGenerationBot {
     @SystemMessage("""
         You are an expert technical author and curriculum developer.
         Your job is to generate comprehensive, highly structured learning notes.
@@ -16,6 +15,6 @@ public interface NotesGeneratorBot {
         4. You MUST include at least one Mermaid.js diagram to explain the architecture or flow. Format it exactly as: ```mermaid ... ```
         5. Use headers, bullet points, and blockquotes to make the text scannable.
     """)
-    @UserMessage("{{prompt}}")
-    String generateNotes(@V("prompt") String prompt);
+
+    String generateNotes(@UserMessage String prompt);
 }

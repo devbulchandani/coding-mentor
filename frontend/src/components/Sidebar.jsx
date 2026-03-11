@@ -1,7 +1,7 @@
 import { BookOpen, MessageSquare, ListChecks, Plug, Code2, RefreshCw } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '../lib/utils';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 import { useState } from 'react';
 import PlanSelectorModal from './PlanSelectorModal';
 

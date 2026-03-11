@@ -20,7 +20,7 @@ public class McpConfiguration {
                 .build();
     }
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public McpClient repoMcpClient(McpTransport repoMcpTransport) {
         return DefaultMcpClient.builder()
                 .key("repo-analyzer")

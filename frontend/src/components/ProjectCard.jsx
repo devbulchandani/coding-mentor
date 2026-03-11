@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Book, Clock, Target, ExternalLink, Github, RefreshCw } from 'lucide-react';
-import useAppStore from '../store/useAppStore';
+import { Book, Clock, Target, ExternalLink, Github, RefreshCw, Pen, Cpu, Code, Code2, CodeIcon, CodeSquare, CodeSquareIcon } from 'lucide-react';
+import useAppStore from '../hooks/useAppStore';
 import PlanSelectorModal from './PlanSelectorModal';
+import LiveMentor from './LiveMentor';
 
 const ProjectCard = () => {
-    const { currentPlan, repoUrl } = useAppStore();
+    const { currentPlan, repoUrl, milestones } = useAppStore();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     if (!currentPlan) {
@@ -51,6 +52,10 @@ const ProjectCard = () => {
                                 <Target className="w-4 h-4 text-slate-400" />
                                 <span>{currentPlan.skillLevel || 'Beginner'}</span>
                             </div>
+                            <div className="flex items-center gap-1">
+                                <CodeSquareIcon className="w-4 h-4 text-slate-400" />
+                                <span>{currentPlan.tech || 'Beginner'}</span>
+                            </div>
                         </div>
                     </div>
 
@@ -88,6 +93,8 @@ const ProjectCard = () => {
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
             />
+
+            <LiveMentor planId={currentPlan.id} milestoneId={milestones[0]?.id} />
         </>
     );
 };

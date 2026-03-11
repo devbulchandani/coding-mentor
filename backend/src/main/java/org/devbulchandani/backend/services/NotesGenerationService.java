@@ -1,7 +1,7 @@
 package org.devbulchandani.backend.services;
 
 import dev.langchain4j.model.chat.ChatModel;
-import org.devbulchandani.backend.bots.NotesGeneratorBot;
+import org.devbulchandani.backend.bots.NotesGenerationBot;
 import org.devbulchandani.backend.events.MilestoneNotesEvent;
 import org.devbulchandani.backend.models.Milestone;
 import org.devbulchandani.backend.models.MilestoneNotes;
@@ -25,7 +25,7 @@ public class NotesGenerationService {
     private final MilestoneContextService milestoneContextService;
 
     public NotesGenerationService(@Qualifier("gemini2") ChatModel gemini2,
-                                  NotesGeneratorBot notesGeneratorBot,
+                                  NotesGenerationBot notesGeneratorBot,
                                   MilestoneRepository milestoneRepo,
                                   MilestoneNotesRepository noteRepo,
                                   LearningContextService learningContextService,
@@ -55,9 +55,7 @@ public class NotesGenerationService {
         note = noteRepo.save(note);
 
         try {
-            System.out.println("Waiting 15 seconds to respect Vertex AI rate limits...");
-            Thread.sleep(15000);
-            String prompt = buildNotesPrompt(milestone, event.previousCodeContext());
+            String prompt = buildNotesPrompt(milestone, event.repoUrl());
             String markdownResponse = gemini2.chat(prompt);
 
             note.setMarkdownContent(markdownResponse);
@@ -114,4 +112,3 @@ public class NotesGenerationService {
 
 
 }
-

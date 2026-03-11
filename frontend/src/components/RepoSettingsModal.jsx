@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Github, Save, Loader2, AlertCircle } from 'lucide-react';
 import { planApi } from '../api/planApi';
 import { getErrorMessage } from '../api/errorHandler';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 
 const RepoSettingsModal = ({ isOpen, onClose }) => {
     const { currentPlan, repoUrl, setRepoUrl } = useAppStore();

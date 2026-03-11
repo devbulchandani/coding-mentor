@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Github, Play, Cpu, Clock, BarChart } from 'lucide-react';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 import { planApi } from '../api/planApi';
 import { getErrorMessage } from '../api/errorHandler';
 

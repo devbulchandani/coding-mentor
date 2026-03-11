@@ -1,5 +1,6 @@
 package org.devbulchandani.backend.bots;
 
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
 
 public interface MentorBot {

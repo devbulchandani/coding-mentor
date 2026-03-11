@@ -1,6 +1,6 @@
 import { Circle, Disc, Lock, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 
 const MilestoneItem = ({ id, sequenceNumber, title, status, isLast, isNextCompleted }) => {
     const navigate = useNavigate();

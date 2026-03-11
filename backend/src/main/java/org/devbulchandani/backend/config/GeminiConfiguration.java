@@ -21,11 +21,12 @@ public class GeminiConfiguration {
     }
 
     @Bean
-    public ChatModel gemini2(){
+    public ChatModel gemini2() {
         return VertexAiGeminiChatModel.builder()
                 .project(System.getenv("PROJECT_ID"))
                 .location("us-central1")
                 .modelName("gemini-2.5-pro")
+                .maxRetries(5)
                 .build();
     }
 }

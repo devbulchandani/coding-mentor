@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, Book, Clock, Target, CheckCircle2, Loader2 } from 'lucide-react';
+import { X, Book, Clock, Target, CheckCircle2, Loader2, CodeSquareIcon } from 'lucide-react';
 import { planApi } from '../api/planApi';
 import { getErrorMessage } from '../api/errorHandler';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 
 const PlanCard = ({ plan, isSelected, onSelect }) => {
     return (
@@ -43,6 +43,11 @@ const PlanCard = ({ plan, isSelected, onSelect }) => {
                         <div className="flex items-center gap-1">
                             <Book className="w-3 h-3" />
                             <span>{plan.milestones?.length || 0} milestones</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                            <CodeSquareIcon className="w-3 h-3" />
+                            <span>{plan.tech} </span>
                         </div>
                     </div>
                 </div>

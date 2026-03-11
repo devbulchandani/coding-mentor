@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 import { Code, Terminal, Braces, Zap } from 'lucide-react';
 
 const Login = () => {

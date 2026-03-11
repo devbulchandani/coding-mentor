@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 
 const Layout = () => {
     const { user } = useAppStore();

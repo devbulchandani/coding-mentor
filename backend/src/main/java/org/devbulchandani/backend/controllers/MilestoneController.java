@@ -3,6 +3,7 @@ package org.devbulchandani.backend.controllers;
 import org.devbulchandani.backend.events.MilestoneNotesEvent;
 import org.devbulchandani.backend.models.MilestoneNotes;
 import org.devbulchandani.backend.repositories.MilestoneNotesRepository;
+import org.devbulchandani.backend.services.NotesGenerationService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,10 +19,12 @@ import java.util.List;
 public class MilestoneController {
     private final MilestoneNotesRepository notesRepo;
     private final ApplicationEventPublisher publisher;
+    private final NotesGenerationService notesGenerationService;
 
-    public MilestoneController(MilestoneNotesRepository notesRepo, ApplicationEventPublisher publisher) {
+    public MilestoneController(MilestoneNotesRepository notesRepo, ApplicationEventPublisher publisher, NotesGenerationService notesGenerationService) {
         this.notesRepo = notesRepo;
         this.publisher = publisher;
+        this.notesGenerationService = notesGenerationService;
     }
 
     @GetMapping("/{milestoneId}/notes")

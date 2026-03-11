@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Copy, Check, Plug, Code2, Terminal, ExternalLink } from 'lucide-react';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 
 const McpIntegration = () => {
     const { currentPlan } = useAppStore();

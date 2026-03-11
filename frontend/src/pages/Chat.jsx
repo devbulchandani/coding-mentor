@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Code2, Bot, User, AlertCircle, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 import { chatApi } from '../api/chatApi';
 import { getErrorMessage } from '../api/errorHandler';
 import PlanSelectorModal from '../components/PlanSelectorModal';

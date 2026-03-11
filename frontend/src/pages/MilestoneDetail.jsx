@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useId, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CheckCircle2, ChevronLeft, Lock, Info, AlertCircle, Circle, Loader2, BookOpen, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import useAppStore from '../store/useAppStore';
+import useAppStore from '../hooks/useAppStore';
 import { verificationApi } from '../api/verificationApi';
 import { getErrorMessage } from '../api/errorHandler';
 import { milestoneApi } from '../api/mileStoneApi';

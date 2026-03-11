@@ -1,10 +1,12 @@
 package org.devbulchandani.backend.services;
 
 import org.devbulchandani.backend.bots.MentorBot;
+import org.devbulchandani.backend.events.MilestoneNotesEvent;
 import org.devbulchandani.backend.models.LearningPlan;
 import org.devbulchandani.backend.models.Milestone;
 import org.devbulchandani.backend.repositories.LearningPlanRepository;
 import org.devbulchandani.backend.repositories.MilestoneRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,13 +16,15 @@ public class VerificationService {
     private final LearningPlanRepository planRepo;
     private final MilestoneContextService milestoneContext;
     private final LearningContextService planContext;
+    private final ApplicationEventPublisher publisher;
 
-    public VerificationService(MentorBot mentorBot, MilestoneRepository milestoneRepo, LearningPlanRepository planRepo, MilestoneContextService milestoneContext, LearningContextService planContext) {
+    public VerificationService(MentorBot mentorBot, MilestoneRepository milestoneRepo, LearningPlanRepository planRepo, MilestoneContextService milestoneContext, LearningContextService planContext, ApplicationEventPublisher publisher) {
         this.mentorBot = mentorBot;
         this.milestoneRepo = milestoneRepo;
         this.planRepo = planRepo;
         this.milestoneContext = milestoneContext;
         this.planContext = planContext;
+        this.publisher = publisher;
     }
 
     public String verifyMilestone(Long milestoneId) {
@@ -67,6 +71,14 @@ public class VerificationService {
         m.setCompleted(completed);
         milestoneRepo.save(m);
 
+        if (completed) {
+            plan.getMilestones().stream()
+                    .filter(ms -> !ms.isCompleted() && ms.getSequenceNumber() > m.getSequenceNumber())
+                    .min(java.util.Comparator.comparingInt(Milestone::getSequenceNumber))
+                    .ifPresent(nextMilestone -> {
+                        publisher.publishEvent(new MilestoneNotesEvent(nextMilestone.getId(), repoUrl));
+                    });
+        }
         return aiResponse;
     }
 }
