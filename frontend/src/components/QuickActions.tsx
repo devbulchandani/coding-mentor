@@ -1,8 +1,16 @@
-import React from 'react';
 import { MessageCircle, CheckCircle, RefreshCw, Map } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { LucideIcon } from 'lucide-react';
 
-const QuickAction = ({ icon: Icon, label, colorClass, onClick, bgColorClass }) => (
+interface QuickActionProps {
+    icon: LucideIcon;
+    label: string;
+    colorClass: string;
+    onClick: () => void;
+    bgColorClass: string;
+}
+
+const QuickAction = ({ icon: Icon, label, colorClass, onClick, bgColorClass }: QuickActionProps) => (
     <button
         onClick={onClick}
         className={`flex flex-col items-center justify-center gap-3 p-4 rounded-xl border transition-all hover:scale-105 hover:shadow-md ${bgColorClass} ${colorClass.replace('text', 'border')}`}

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ProjectCard from '../components/ProjectCard';
 import MilestoneTimeline from '../components/MilestoneTimeline';
-import QuickActions from '../components/QuickActions';
 import RepoSettingsModal from '../components/RepoSettingsModal';
 import useAppStore from '../hooks/useAppStore';
 import { Settings } from 'lucide-react';
@@ -29,7 +28,6 @@ const Dashboard = () => {
 
             <ProjectCard />
             <MilestoneTimeline />
-            {/* <QuickActions /> */}
 
             <RepoSettingsModal 
                 isOpen={isSettingsOpen} 

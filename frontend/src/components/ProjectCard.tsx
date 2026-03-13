@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Book, Clock, Target, ExternalLink, Github, RefreshCw, Pen, Cpu, Code, Code2, CodeIcon, CodeSquare, CodeSquareIcon } from 'lucide-react';
+import { useState } from 'react';
+import { Book, Clock, Target, ExternalLink, Github, RefreshCw, CodeSquareIcon } from 'lucide-react';
 import useAppStore from '../hooks/useAppStore';
 import PlanSelectorModal from './PlanSelectorModal';
 import LiveMentor from './LiveMentor';
@@ -93,8 +93,6 @@ const ProjectCard = () => {
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
             />
-
-            <LiveMentor planId={currentPlan.id} milestoneId={milestones[0]?.id} />
         </>
     );
 };

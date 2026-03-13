@@ -1,10 +1,16 @@
-import React from 'react';
 import { Home, Book, MessageCircle, LogOut, Code } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import useAppStore from '../hooks/useAppStore';
 
-const NavItem = ({ icon: Icon, label, to }) => (
+interface NavItemProps {
+    icon: LucideIcon;
+    label: string;
+    to: string;
+}
+
+const NavItem = ({ icon: Icon, label, to }: NavItemProps) => (
     <NavLink
         to={to}
         className={({ isActive }) => cn(

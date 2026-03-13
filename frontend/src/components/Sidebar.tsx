@@ -1,11 +1,20 @@
 import { BookOpen, MessageSquare, ListChecks, Plug, Code2, RefreshCw } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { LucideIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import useAppStore from '../hooks/useAppStore';
 import { useState } from 'react';
 import PlanSelectorModal from './PlanSelectorModal';
+import LiveMentor from './LiveMentor';
 
-const SidebarItem = ({ icon: Icon, label, to, onClick }) => {
+interface SidebarItemProps {
+    icon: LucideIcon;
+    label: string;
+    to: string;
+    onClick?: () => void;
+}
+
+const SidebarItem = ({ icon: Icon, label, to, onClick }: SidebarItemProps) => {
     return (
         <NavLink
             to={to}
@@ -65,6 +74,9 @@ const Sidebar = () => {
                         <SidebarItem icon={BookOpen} label="Check Progress" to="/dashboard?tab=progress" />
                         <SidebarItem icon={Plug} label="MCP Integration" to="/mcp" />
                     </nav>
+                </div>
+                <div className="p-4">
+                    <LiveMentor />
                 </div>
             </aside>
 

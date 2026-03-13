@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 
-const axiosClient = axios.create({
+const axiosClient: AxiosInstance = axios.create({
     baseURL: 'http://localhost:8080/api',
     headers: {
         'Content-Type': 'application/json',
@@ -9,9 +9,9 @@ const axiosClient = axios.create({
 
 // Add token to requests if available
 axiosClient.interceptors.request.use(
-    (config) => {
+    (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
         const token = localStorage.getItem('authToken');
-        if (token) {
+        if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -23,7 +23,7 @@ axiosClient.interceptors.request.use(
 
 // Handle response errors
 axiosClient.interceptors.response.use(
-    (response) => response,
+    (response: AxiosResponse) => response,
     (error) => {
         if (error.response?.status === 401) {
             localStorage.removeItem('authToken');

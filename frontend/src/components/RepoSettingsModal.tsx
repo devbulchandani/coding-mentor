@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Github, Save, Loader2, AlertCircle } from 'lucide-react';
 import { planApi } from '../api/planApi';
 import { getErrorMessage } from '../api/errorHandler';
 import useAppStore from '../hooks/useAppStore';
 
-const RepoSettingsModal = ({ isOpen, onClose }) => {
+interface RepoSettingsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const RepoSettingsModal = ({ isOpen, onClose }: RepoSettingsModalProps) => {
     const { currentPlan, repoUrl, setRepoUrl } = useAppStore();
     const [githubUrl, setGithubUrl] = useState('');
     const [loading, setLoading] = useState(false);
@@ -19,23 +24,11 @@ const RepoSettingsModal = ({ isOpen, onClose }) => {
         }
     }, [isOpen, repoUrl]);
 
-    const validateGithubUrl = (url) => {
-        if (!url) return true; // Empty is valid (optional)
-        
-        const githubPattern = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w.-]+\/?$/;
-        return githubPattern.test(url);
-    };
-
     const handleSave = async () => {
         if (!currentPlan) {
             setError('No active learning plan selected');
             return;
         }
-
-        // if (githubUrl && !validateGithubUrl(githubUrl)) {
-        //     setError('Please enter a valid GitHub repository URL (e.g., https://github.com/username/repo)');
-        //     return;
-        // }
 
         setLoading(true);
         setError('');
@@ -52,7 +45,7 @@ const RepoSettingsModal = ({ isOpen, onClose }) => {
             }, 1500);
         } catch (err) {
             console.error('Failed to update GitHub URL:', err);
-            setError(getErrorMessage(err));
+            setError(getErrorMessage(err as any));
         } finally {
             setLoading(false);
         }

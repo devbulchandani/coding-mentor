@@ -13,7 +13,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { login, register } = useAppStore();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -82,7 +82,7 @@ const Login = () => {
                         <Code size={32} />
                     </div>
                     <h1 className="text-3xl font-bold text-slate-800 mb-2">Buildspace AI</h1>
-                    <p className="text-slate-500 font-medium italic">“Learn by building, not by watching.”</p>
+                    <p className="text-slate-500 font-medium italic">"Learn by building, not by watching."</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">

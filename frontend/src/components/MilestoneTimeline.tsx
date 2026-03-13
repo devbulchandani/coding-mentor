@@ -1,18 +1,37 @@
 import { Circle, Disc, Lock, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { LucideIcon } from 'lucide-react';
 import useAppStore from '../hooks/useAppStore';
 
-const MilestoneItem = ({ id, sequenceNumber, title, status, isLast, isNextCompleted }) => {
+type MilestoneStatus = 'COMPLETED' | 'IN_PROGRESS' | 'LOCKED';
+
+interface MilestoneItemProps {
+    id: number;
+    sequenceNumber: number;
+    title: string;
+    status: MilestoneStatus;
+    isLast: boolean;
+}
+
+interface StatusStyles {
+    icon: LucideIcon;
+    color: string;
+    bg: string;
+    border: string;
+}
+
+const MilestoneItem = ({ id, sequenceNumber, title, status, isLast }: MilestoneItemProps) => {
     const navigate = useNavigate();
 
     // Status styles
-    const styles = {
+    const styles: Record<MilestoneStatus, StatusStyles> = {
         COMPLETED: { icon: CheckCircle2, color: "text-mint-500", bg: "bg-mint-50", border: "border-mint-200" },
         IN_PROGRESS: { icon: Disc, color: "text-yellow-500 animate-pulse", bg: "bg-yellow-50", border: "border-yellow-200" },
         LOCKED: { icon: Lock, color: "text-slate-400", bg: "bg-slate-50", border: "border-slate-200" }
-    }[status] || { icon: Circle, color: "text-slate-300", bg: "bg-slate-50", border: "border-slate-200" };
+    };
 
-    const Icon = styles.icon;
+    const style = styles[status];
+    const Icon = style.icon;
 
     // Determine connector line color based on current milestone status
     const getConnectorColor = () => {
@@ -31,12 +50,12 @@ const MilestoneItem = ({ id, sequenceNumber, title, status, isLast, isNextComple
             )}
 
             <div className={`absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center bg-white border-2 z-10 transition-all ${status === 'COMPLETED' ? 'border-mint-500 shadow-md shadow-mint-200' : status === 'IN_PROGRESS' ? 'border-yellow-400 shadow-md shadow-yellow-200' : 'border-slate-300'}`}>
-                <Icon className={`w-3.5 h-3.5 ${styles.color}`} />
+                <Icon className={`w-3.5 h-3.5 ${style.color}`} />
             </div>
 
             <div
                 onClick={() => navigate(`/milestone/${id}`)}
-                className={`flex items-center justify-between p-4 rounded-lg border ${styles.border} ${styles.bg} hover:shadow-md transition-all cursor-pointer transform hover:-translate-y-0.5`}
+                className={`flex items-center justify-between p-4 rounded-lg border ${style.border} ${style.bg} hover:shadow-md transition-all cursor-pointer transform hover:-translate-y-0.5`}
             >
                 <span className={`font-semibold ${status === 'LOCKED' ? 'text-slate-500' : 'text-slate-800'}`}>
                     Milestone {sequenceNumber}: {title}
@@ -70,17 +89,17 @@ const MilestoneTimeline = () => {
     
     const displayMilestones = milestones.map((m, index) => {
         if (m.completed) {
-            return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'COMPLETED' };
+            return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'COMPLETED' as MilestoneStatus };
         }
         
         const previousMilestone = index > 0 ? milestones[index - 1] : null;
         const isPreviousCompleted = !previousMilestone || previousMilestone.completed;
         
         if (index === firstIncompleteIndex && isPreviousCompleted) {
-            return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'IN_PROGRESS' };
+            return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'IN_PROGRESS' as MilestoneStatus };
         }
         
-        return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'LOCKED' };
+        return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'LOCKED' as MilestoneStatus };
     });
 
     return (

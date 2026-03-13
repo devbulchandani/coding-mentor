@@ -4,9 +4,15 @@ import ReactMarkdown from 'react-markdown';
 import useAppStore from '../hooks/useAppStore';
 import { chatApi } from '../api/chatApi';
 import { getErrorMessage } from '../api/errorHandler';
+import { ChatMessage as ChatMessageType } from '../types';
 import PlanSelectorModal from '../components/PlanSelectorModal';
 
-const ChatMessage = ({ role, content }) => {
+interface ChatMessageProps {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
+const ChatMessage = ({ role, content }: ChatMessageProps) => {
     const isUser = role === 'user';
     return (
         <div className={`flex gap-3 mb-6 ${isUser ? 'flex-row-reverse' : ''}`}>
@@ -31,11 +37,11 @@ const ChatMessage = ({ role, content }) => {
 
 const Chat = () => {
     const { currentPlan, repoUrl, milestones } = useAppStore();
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<ChatMessageType[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showPlanSelector, setShowPlanSelector] = useState(false);
-    const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Initialize with welcome message
     useEffect(() => {
@@ -60,7 +66,7 @@ const Chat = () => {
         scrollToBottom();
     }, [messages]);
 
-    const handleSend = async (e) => {
+    const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!input.trim() || isLoading) return;
 
@@ -72,7 +78,7 @@ const Chat = () => {
             return;
         }
 
-        const userMessage = { role: 'user', content: input };
+        const userMessage: ChatMessageType = { role: 'user', content: input };
         setMessages(prev => [...prev, userMessage]);
         setInput('');
         setIsLoading(true);
@@ -92,7 +98,7 @@ const Chat = () => {
             console.error('Chat error:', error);
             setMessages(prev => [...prev, {
                 role: 'assistant',
-                content: `I'm sorry, I encountered an error: ${getErrorMessage(error)}`
+                content: `I'm sorry, I encountered an error: ${getErrorMessage(error as any)}`
             }]);
         } finally {
             setIsLoading(false);

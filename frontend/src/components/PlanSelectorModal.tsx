@@ -2,9 +2,16 @@ import { useState, useEffect } from 'react';
 import { X, Book, Clock, Target, CheckCircle2, Loader2, CodeSquareIcon } from 'lucide-react';
 import { planApi } from '../api/planApi';
 import { getErrorMessage } from '../api/errorHandler';
+import { LearningPlan } from '../types';
 import useAppStore from '../hooks/useAppStore';
 
-const PlanCard = ({ plan, isSelected, onSelect }) => {
+interface PlanCardProps {
+    plan: LearningPlan;
+    isSelected: boolean;
+    onSelect: (plan: LearningPlan) => void;
+}
+
+const PlanCard = ({ plan, isSelected, onSelect }: PlanCardProps) => {
     return (
         <div
             onClick={() => onSelect(plan)}
@@ -56,9 +63,14 @@ const PlanCard = ({ plan, isSelected, onSelect }) => {
     );
 };
 
-const PlanSelectorModal = ({ isOpen, onClose }) => {
-    const [plans, setPlans] = useState([]);
-    const [selectedPlan, setSelectedPlan] = useState(null);
+interface PlanSelectorModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+const PlanSelectorModal = ({ isOpen, onClose }: PlanSelectorModalProps) => {
+    const [plans, setPlans] = useState<LearningPlan[]>([]);
+    const [selectedPlan, setSelectedPlan] = useState<LearningPlan | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const { currentPlan, setCurrentPlan, setMilestones, setRepoUrl } = useAppStore();
@@ -83,7 +95,7 @@ const PlanSelectorModal = ({ isOpen, onClose }) => {
             }
         } catch (err) {
             console.error('Failed to fetch plans:', err);
-            setError(getErrorMessage(err));
+            setError(getErrorMessage(err as any));
         } finally {
             setLoading(false);
         }
@@ -93,8 +105,8 @@ const PlanSelectorModal = ({ isOpen, onClose }) => {
         if (selectedPlan) {
             setCurrentPlan({
                 id: selectedPlan.id,
-                title: selectedPlan.projectName,
-                subtitle: selectedPlan.projectDescription,
+                title: selectedPlan.projectName || selectedPlan.title,
+                subtitle: selectedPlan.projectDescription || selectedPlan.subtitle,
                 tech: selectedPlan.tech,
                 durationDays: selectedPlan.durationDays,
                 skillLevel: selectedPlan.skillLevel

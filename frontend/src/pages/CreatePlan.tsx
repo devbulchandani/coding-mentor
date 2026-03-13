@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Github, Play, Cpu, Clock, BarChart } from 'lucide-react';
 import useAppStore from '../hooks/useAppStore';
@@ -19,7 +19,7 @@ const CreatePlan = () => {
         repoUrl: ''
     });
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         setError('');
@@ -33,8 +33,8 @@ const CreatePlan = () => {
 
             setCurrentPlan({
                 id: planData.id,
-                title: planData.projectName,
-                subtitle: form.repoUrl || planData.projectDescription,
+                title: planData.projectName || planData.title,
+                subtitle: form.repoUrl || planData.projectDescription || planData.subtitle,
                 tech: planData.tech,
                 durationDays: planData.durationDays,
                 skillLevel: planData.skillLevel
@@ -46,7 +46,7 @@ const CreatePlan = () => {
             navigate('/dashboard');
         } catch (err) {
             console.error('Failed to create plan:', err);
-            setError(getErrorMessage(err));
+            setError(getErrorMessage(err as any));
         } finally {
             setIsLoading(false);
         }

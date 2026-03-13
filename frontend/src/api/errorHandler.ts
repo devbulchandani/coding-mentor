@@ -1,7 +1,9 @@
+import { ApiError } from '../types';
+
 /**
  * Extract user-friendly error message from API error response
  */
-export const getErrorMessage = (error) => {
+export const getErrorMessage = (error: ApiError): string => {
     if (error.response) {
         // Server responded with error status
         return error.response.data?.message || 
@@ -19,13 +21,13 @@ export const getErrorMessage = (error) => {
 /**
  * Check if error is authentication related
  */
-export const isAuthError = (error) => {
+export const isAuthError = (error: ApiError): boolean => {
     return error.response?.status === 401 || error.response?.status === 403;
 };
 
 /**
  * Check if error is network related
  */
-export const isNetworkError = (error) => {
-    return !error.response && error.request;
+export const isNetworkError = (error: ApiError): boolean => {
+    return !error.response && !!error.request;
 };

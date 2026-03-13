@@ -1,4 +1,4 @@
-export function floatTo16BitPCM(input) {
+export function floatTo16BitPCM(input: Float32Array): Int16Array {
     const output = new Int16Array(input.length);
     for (let i = 0; i < input.length; i++) {
         const s = Math.max(-1, Math.min(1, input[i]));
@@ -7,8 +7,7 @@ export function floatTo16BitPCM(input) {
     return output;
 }
 
-
-export function pcm16ToBase64(pcm16) {
+export function pcm16ToBase64(pcm16: Int16Array): string {
     const buffer = new Uint8Array(pcm16.buffer);
     let binary = '';
     for (let i = 0; i < buffer.byteLength; i++) {
@@ -17,7 +16,7 @@ export function pcm16ToBase64(pcm16) {
     return window.btoa(binary);
 }
 
-export function base64ToPcm16(base64) {
+export function base64ToPcm16(base64: string): Int16Array {
     const binary = window.atob(base64);
     const buffer = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {

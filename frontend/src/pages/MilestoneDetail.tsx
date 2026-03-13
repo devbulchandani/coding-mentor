@@ -6,6 +6,7 @@ import useAppStore from '../hooks/useAppStore';
 import { verificationApi } from '../api/verificationApi';
 import { getErrorMessage } from '../api/errorHandler';
 import { milestoneApi } from '../api/mileStoneApi';
+import { Milestone, MilestoneNotes } from '../types';
 import mermaid from 'mermaid';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -21,7 +22,19 @@ mermaid.initialize({
     }
 });
 
-const ChecklistItem = ({ text, checked, onToggle }) => (
+interface ChecklistItemType {
+    id: number;
+    text: string;
+    checked: boolean;
+}
+
+interface ChecklistItemProps {
+    text: string;
+    checked: boolean;
+    onToggle: () => void;
+}
+
+const ChecklistItem = ({ text, checked, onToggle }: ChecklistItemProps) => (
     <div
         onClick={onToggle}
         className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${checked
@@ -39,14 +52,13 @@ const ChecklistItem = ({ text, checked, onToggle }) => (
     </div>
 );
 
-
-const sanitizeMermaidLabel = (value = '') =>
+const sanitizeMermaidLabel = (value: string = '') =>
     value
         .replace(/`/g, '')
         .replace(/"/g, '&quot;')
         .trim();
 
-const normalizeMermaidChart = (value = '') =>
+const normalizeMermaidChart = (value: string = '') =>
     value
         .replace(/^```mermaid\s*/i, '')
         .replace(/^```\s*/i, '')
@@ -58,13 +70,15 @@ const normalizeMermaidChart = (value = '') =>
         .replace(/\[([^\]]*?)\]/g, (_, label) => `[${sanitizeMermaidLabel(label)}]`)
         .replace(/\{([^{}]*?)\}/g, (_, label) => `{${sanitizeMermaidLabel(label)}}`);
 
+interface MermaidProps {
+    chart: string;
+}
 
-
-const Mermaid = ({ chart }) => {
+const Mermaid = ({ chart }: MermaidProps) => {
     const mermaidId = useId();
     const idRef = useRef(`mermaid-${mermaidId.replace(/:/g, '')}`);
-    const [error, setError] = useState(null);
-    const [svg, setSvg] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+    const [svg, setSvg] = useState<string | null>(null);
 
     useEffect(() => {
         if (!chart) return;
@@ -73,11 +87,10 @@ const Mermaid = ({ chart }) => {
 
         const renderDiagram = async () => {
             try {
-                // Clear previous error if any
                 setError(null);
                 const { svg } = await mermaid.render(`${idRef.current}-${Date.now()}`, sanitized);
                 setSvg(svg);
-            } catch (err) {
+            } catch (err: any) {
                 console.error("Mermaid Render Error:", err);
                 setError(err?.message || "Syntax error in diagram definition. Check for nested brackets or special characters.");
             }
@@ -110,9 +123,7 @@ const Mermaid = ({ chart }) => {
     );
 };
 
-// ─── Code Block ───────────────────────────────────────────────────────────────
-
-const LANGUAGE_META = {
+const LANGUAGE_META: Record<string, { label: string; dot: string }> = {
     javascript: { label: 'JavaScript', dot: '#f7df1e' },
     js: { label: 'JS', dot: '#f7df1e' },
     typescript: { label: 'TypeScript', dot: '#3178c6' },
@@ -131,7 +142,12 @@ const LANGUAGE_META = {
     yaml: { label: 'YAML', dot: '#cb171e' },
 };
 
-const CodeBlock = ({ className, children }) => {
+interface CodeBlockProps {
+    className?: string;
+    children: React.ReactNode;
+}
+
+const CodeBlock = ({ className, children }: CodeBlockProps) => {
     const [copied, setCopied] = useState(false);
     const lang = /language-(\w+)/.exec(className || '')?.[1] || 'text';
     const meta = LANGUAGE_META[lang] || { label: lang.toUpperCase(), dot: '#94a3b8' };
@@ -146,7 +162,6 @@ const CodeBlock = ({ className, children }) => {
 
     return (
         <div className="my-5 rounded-xl overflow-hidden border border-slate-700/50 shadow-lg">
-            {/* Titlebar */}
             <div className="flex items-center justify-between px-4 py-2.5 bg-[#0f172a] border-b border-slate-700/60">
                 <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -163,7 +178,6 @@ const CodeBlock = ({ className, children }) => {
                     {copied ? '✓ copied' : 'copy'}
                 </button>
             </div>
-            {/* Code with Syntax Highlighting */}
             <div className="bg-[#0f172a] overflow-x-auto text-sm">
                 <SyntaxHighlighter
                     language={lang === 'code' ? 'text' : lang}
@@ -184,41 +198,43 @@ const CodeBlock = ({ className, children }) => {
     );
 };
 
+interface InlineCodeProps {
+    children: React.ReactNode;
+}
 
-const InlineCode = ({ children }) => (
+const InlineCode = ({ children }: InlineCodeProps) => (
     <code className="px-1.5 py-0.5 rounded-md bg-sky-50 text-sky-700 font-mono text-[0.85em] border border-sky-100 mx-0.5">
         {children}
     </code>
 );
 
-
-const notesComponents = {
-    h1: ({ children }) => (
+const notesComponents: any = {
+    h1: ({ children }: any) => (
         <h1 className="text-2xl font-bold text-slate-900 mt-8 mb-3 pb-2 border-b-2 border-sky-100 first:mt-0">
             {children}
         </h1>
     ),
-    h2: ({ children }) => (
+    h2: ({ children }: any) => (
         <h2 className="text-xl font-bold text-slate-800 mt-7 mb-2.5 flex items-center gap-2 first:mt-0">
             <span className="w-1 h-5 rounded-full bg-sky-400 inline-block flex-shrink-0" />
             {children}
         </h2>
     ),
-    h3: ({ children }) => (
+    h3: ({ children }: any) => (
         <h3 className="text-xs font-bold text-slate-500 mt-5 mb-2 uppercase tracking-widest">{children}</h3>
     ),
-    p: ({ children }) => (
+    p: ({ children }: any) => (
         <p className="text-slate-600 leading-[1.8] my-3 text-[0.95rem]">{children}</p>
     ),
-    ul: ({ children }) => <ul className="my-3 space-y-1.5 ml-1">{children}</ul>,
-    ol: ({ children }) => <ol className="my-3 space-y-1.5 ml-4 list-decimal">{children}</ol>,
-    li: ({ children }) => (
+    ul: ({ children }: any) => <ul className="my-3 space-y-1.5 ml-1">{children}</ul>,
+    ol: ({ children }: any) => <ol className="my-3 space-y-1.5 ml-4 list-decimal">{children}</ol>,
+    li: ({ children }: any) => (
         <li className="flex items-start gap-3 text-slate-600 text-[0.95rem] leading-relaxed mb-2">
             <div className="mt-2 w-1.5 h-1.5 rounded-full bg-sky-400 flex-shrink-0 shadow-[0_0_8px_rgba(56,189,248,0.6)]" />
             <span className="flex-1">{children}</span>
         </li>
     ),
-    blockquote: ({ children }) => (
+    blockquote: ({ children }: any) => (
         <blockquote className="my-6 pl-5 border-l-4 border-sky-400 bg-gradient-to-r from-sky-50 to-white py-4 pr-4 rounded-r-xl shadow-sm">
             <div className="flex gap-3 text-sky-800">
                 <Info className="w-5 h-5 flex-shrink-0 text-sky-500 mt-0.5" />
@@ -231,25 +247,25 @@ const notesComponents = {
     hr: () => (
         <hr className="my-7 border-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
     ),
-    strong: ({ children }) => <strong className="font-bold text-slate-800">{children}</strong>,
-    em: ({ children }) => <em className="italic text-slate-500">{children}</em>,
-    a: ({ href, children }) => (
+    strong: ({ children }: any) => <strong className="font-bold text-slate-800">{children}</strong>,
+    em: ({ children }: any) => <em className="italic text-slate-500">{children}</em>,
+    a: ({ href, children }: any) => (
         <a href={href} target="_blank" rel="noopener noreferrer"
             className="text-sky-600 underline underline-offset-2 decoration-sky-300 hover:text-sky-800 transition-colors">
             {children}
         </a>
     ),
-    table: ({ children }) => (
+    table: ({ children }: any) => (
         <div className="my-5 overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
             <table className="w-full text-sm">{children}</table>
         </div>
     ),
-    thead: ({ children }) => <thead className="bg-slate-50 border-b border-slate-200">{children}</thead>,
-    th: ({ children }) => (
+    thead: ({ children }: any) => <thead className="bg-slate-50 border-b border-slate-200">{children}</thead>,
+    th: ({ children }: any) => (
         <th className="px-4 py-3 text-left font-bold text-slate-700 text-xs uppercase tracking-wide">{children}</th>
     ),
-    td: ({ children }) => <td className="px-4 py-3 text-slate-600 border-t border-slate-100">{children}</td>,
-    code({ inline, className, children }) {
+    td: ({ children }: any) => <td className="px-4 py-3 text-slate-600 border-t border-slate-100">{children}</td>,
+    code({ inline, className, children }: any) {
         const match = /language-(\w+)/.exec(className || '');
         if (!inline && match?.[1] === 'mermaid') {
             return (
@@ -268,22 +284,26 @@ const notesComponents = {
     },
 };
 
-// ─── Main Component ────────────────────────────────────────────────────────────
+interface FeedbackType {
+    type: 'success' | 'error';
+    message: string;
+}
 
 const MilestoneDetail = () => {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { repoUrl, milestones, updateMilestoneStatus, currentPlan } = useAppStore();
-    const [checklist, setChecklist] = useState([]);
+    const [checklist, setChecklist] = useState<ChecklistItemType[]>([]);
     const [isChecking, setIsChecking] = useState(false);
-    const [feedback, setFeedback] = useState(null);
-    const [milestone, setMilestone] = useState(null);
+    const [feedback, setFeedback] = useState<FeedbackType | null>(null);
+    const [milestone, setMilestone] = useState<Milestone | null>(null);
     const [loading, setLoading] = useState(true);
-    const [notes, setNotes] = useState(null);
+    const [notes, setNotes] = useState<MilestoneNotes | null>(null);
     const [notesLoading, setNotesLoading] = useState(true);
+    const setVoiceContext = useAppStore(state => state.setVoiceContext);
 
     useEffect(() => {
-        const foundMilestone = milestones?.find(m => m.id === parseInt(id));
+        const foundMilestone = milestones?.find(m => m.id === parseInt(id!));
         if (foundMilestone) {
             setMilestone(foundMilestone);
             if (foundMilestone.learningObjectives) {
@@ -308,7 +328,7 @@ const MilestoneDetail = () => {
 
     const fetchNotes = useCallback(async () => {
         try {
-            const fetchedNotes = await milestoneApi.getNotes(id);
+            const fetchedNotes = await milestoneApi.getNotes(id!);
             setNotes(fetchedNotes);
 
             if (fetchedNotes?.status === 'PENDING') {
@@ -322,7 +342,6 @@ const MilestoneDetail = () => {
         }
     }, [id]);
 
-
     useEffect(() => {
         if (milestone) {
             fetchNotes();
@@ -335,25 +354,23 @@ const MilestoneDetail = () => {
         setIsChecking(true);
         setFeedback(null);
         try {
-            const result = await verificationApi.verifyMilestone(id, repoUrl);
+            const result = await verificationApi.verifyMilestone(id!);
             setFeedback({ type: result.completed ? 'success' : 'error', message: result.feedback });
             if (result.completed) {
-                updateMilestoneStatus(parseInt(id), true);
+                updateMilestoneStatus(parseInt(id!), true);
                 setChecklist(prev => prev.map(item => ({ ...item, checked: true })));
             }
         } catch (error) {
-            setFeedback({ type: 'error', message: getErrorMessage(error) });
+            setFeedback({ type: 'error', message: getErrorMessage(error as any) });
         } finally {
             setIsChecking(false);
         }
     };
 
-
-
     const handleGenerateNotes = async () => {
         try {
             setNotesLoading(true);
-            await milestoneApi.generateNotes(id);
+            await milestoneApi.generateNotes(id!);
             fetchNotes();
         } catch (error) {
             console.error("Failed to trigger generation:", error);
@@ -361,7 +378,7 @@ const MilestoneDetail = () => {
         }
     };
 
-    const toggleItem = (itemId) =>
+    const toggleItem = (itemId: number) =>
         setChecklist(checklist.map(item => item.id === itemId ? { ...item, checked: !item.checked } : item));
 
     if (loading) return (
@@ -432,7 +449,6 @@ const MilestoneDetail = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
-
                     {/* Goal */}
                     <div className="bg-sky-50 border border-sky-100 rounded-xl p-6 shadow-sm">
                         <div className="flex items-start gap-3">
@@ -452,9 +468,8 @@ const MilestoneDetail = () => {
                         </div>
                     </div>
 
-                    {/* ══ AI Concept Guide ══ */}
+                    {/* AI Concept Guide */}
                     <div className="rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                        {/* Dark header */}
                         <div className="px-6 py-4 border-b border-slate-700 flex items-center gap-2.5 bg-gradient-to-r from-slate-800 to-slate-700">
                             <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-sky-500/20 border border-sky-400/30">
                                 <Sparkles className="w-4 h-4 text-sky-300" />

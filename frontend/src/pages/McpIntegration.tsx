@@ -2,17 +2,33 @@ import { useState } from 'react';
 import { Copy, Check, Plug, Code2, Terminal, ExternalLink } from 'lucide-react';
 import useAppStore from '../hooks/useAppStore';
 
+interface McpServer {
+    name: string;
+    description: string;
+    config: Record<string, any>;
+    tools: string[];
+    color: string;
+    requiresPlanId?: boolean;
+}
+
+interface Client {
+    name: string;
+    configPath: string;
+    platform: string;
+    docs: string;
+}
+
 const McpIntegration = () => {
     const { currentPlan } = useAppStore();
-    const [copiedIndex, setCopiedIndex] = useState(null);
+    const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
 
-    const copyToClipboard = (text, index) => {
+    const copyToClipboard = (text: string, index: string) => {
         navigator.clipboard.writeText(text);
         setCopiedIndex(index);
         setTimeout(() => setCopiedIndex(null), 2000);
     };
 
-    const mcpServers = [
+    const mcpServers: McpServer[] = [
         {
             name: "Repo Analyzer",
             description: "Analyze GitHub repositories, read files, and understand project structure",
@@ -40,7 +56,7 @@ const McpIntegration = () => {
         }
     ];
 
-    const clients = [
+    const clients: Client[] = [
         {
             name: "Claude Desktop",
             configPath: "~/Library/Application Support/Claude/claude_desktop_config.json",
