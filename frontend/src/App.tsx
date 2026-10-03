@@ -6,6 +6,7 @@ import CreatePlan from './pages/CreatePlan';
 import Chat from './pages/Chat';
 import MilestoneDetail from './pages/MilestoneDetail';
 import McpIntegration from './pages/McpIntegration';
+import Workspace from './pages/Workspace';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/create-plan" element={<CreatePlan />} />
           <Route path="/plans" element={<Navigate to="/create-plan" replace />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/workspace" element={<Workspace />} />
           <Route path="/mcp" element={<McpIntegration />} />
           <Route path="/milestone/:id" element={<MilestoneDetail />} />
 

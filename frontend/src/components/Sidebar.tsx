@@ -1,4 +1,4 @@
-import { BookOpen, MessageSquare, ListChecks, Plug, Code2, RefreshCw, X, Plus } from 'lucide-react';
+import { BookOpen, MessageSquare, ListChecks, Plug, Code2, RefreshCw, X, Plus, Laptop } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LucideIcon } from 'lucide-react';
 import { createElement, useState } from 'react';
@@ -27,6 +27,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
             <nav className="space-y-1" aria-label="Main navigation">
                 <SidebarItem icon={ListChecks} label="Overview" to="/dashboard" onClick={onClose} />
                 <SidebarItem icon={MessageSquare} label="AI mentor" to="/chat" onClick={onClose} />
+                <SidebarItem icon={Laptop} label="Project IDE" to="/workspace" onClick={onClose} />
                 <SidebarItem icon={Plug} label="Integrations" to="/mcp" onClick={onClose} />
             </nav>
         </div>

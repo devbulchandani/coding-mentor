@@ -2,13 +2,14 @@ import { LogOut, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAppStore from '../hooks/useAppStore';
 import BrandLogo from './BrandLogo';
+import { githubApi } from '../api/githubApi';
 
 interface NavbarProps { onMenuClick: () => void; }
 
 const Navbar = ({ onMenuClick }: NavbarProps) => {
     const { user, logout } = useAppStore();
     const navigate = useNavigate();
-    const handleLogout = () => { logout(); navigate('/login'); };
+    const handleLogout = async () => { try { await githubApi.disconnect(); } catch { /* Continue local sign-out if GitHub is temporarily unavailable. */ } logout(); navigate('/login'); };
 
     return <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-full max-w-[1600px] items-center justify-between px-4 sm:px-6">

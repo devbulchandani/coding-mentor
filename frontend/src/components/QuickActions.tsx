@@ -7,7 +7,7 @@ const QuickAction = ({ icon, label, onClick }: QuickActionProps) => <button onCl
 
 const QuickActions = () => {
     const navigate = useNavigate();
-    return <div className="grid grid-cols-2 gap-3 md:grid-cols-4"><QuickAction icon={MessageCircle} label="Ask mentor" onClick={() => navigate('/chat')} /><QuickAction icon={CheckCircle} label="Check progress" onClick={() => navigate('/dashboard')} /><QuickAction icon={Github} label="Connect repository" onClick={() => navigate('/dashboard')} /><QuickAction icon={Map} label="Create learning plan" onClick={() => navigate('/create-plan')} /></div>;
+    return <div className="grid grid-cols-2 gap-3 md:grid-cols-4"><QuickAction icon={MessageCircle} label="Ask mentor" onClick={() => navigate('/chat')} /><QuickAction icon={CheckCircle} label="Check progress" onClick={() => navigate('/dashboard')} /><QuickAction icon={Github} label="Open project IDE" onClick={() => navigate('/workspace')} /><QuickAction icon={Map} label="Create learning plan" onClick={() => navigate('/create-plan')} /></div>;
 };
 
 export default QuickActions;
