@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 public class CurriculumGeneratorService {
-    private final ChatModel gemini;
+    private final ChatModel bedrockChatModel;
     private final ObjectMapper mapper = new ObjectMapper();
     private final LearningPlanRepository planRepo;
     private final MilestoneRepository milestoneRepo;
@@ -27,8 +27,8 @@ public class CurriculumGeneratorService {
     private final ApplicationEventPublisher publisher;
 
 
-    public CurriculumGeneratorService(ChatModel gemini, LearningPlanRepository planRepo, MilestoneRepository milestoneRepo, UserRepository userrepo, JwtUtil jwtUtil, ApplicationEventPublisher publisher) {
-        this.gemini = gemini;
+    public CurriculumGeneratorService(ChatModel bedrockChatModel, LearningPlanRepository planRepo, MilestoneRepository milestoneRepo, UserRepository userrepo, JwtUtil jwtUtil, ApplicationEventPublisher publisher) {
+        this.bedrockChatModel = bedrockChatModel;
         this.planRepo = planRepo;
         this.milestoneRepo = milestoneRepo;
         this.userRepo = userrepo;
@@ -39,7 +39,7 @@ public class CurriculumGeneratorService {
     public LearningPlan generatePlan(String token, String tech, int days, String skillLevel) {
         String prompt = buildPrompt(tech, days, skillLevel);
 
-        String aiJson = gemini.chat(prompt);
+        String aiJson = bedrockChatModel.chat(prompt);
 
         aiJson = aiJson.replace("```json", "");
         aiJson = aiJson.replace("```", "").trim();
@@ -153,4 +153,3 @@ public class CurriculumGeneratorService {
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
     }
 }
-

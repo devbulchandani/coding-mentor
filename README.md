@@ -30,7 +30,7 @@ Users specify:
 * Time available (e.g., 6 weeks)
 * Skill level (Beginner / Intermediate / Advanced)
 
-The Spring Boot backend (powered by **Gemini 3**) generates a structured learning plan divided into clear, actionable milestones.
+The Spring Boot backend (powered by **OpenAI GPT-OSS 20B on Amazon Bedrock**) generates a structured learning plan divided into clear, actionable milestones.
 
 ### 🔗 2) GitHub Integration + Code Understanding
 

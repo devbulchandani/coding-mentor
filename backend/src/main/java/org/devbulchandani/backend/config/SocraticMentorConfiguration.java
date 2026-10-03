@@ -14,22 +14,22 @@ import org.springframework.context.annotation.Configuration;
 public class SocraticMentorConfiguration {
     @Bean
     public MentorBot mentorBot(
-            @Qualifier("gemini") ChatModel gemini,
+            @Qualifier("bedrockChatModel") ChatModel bedrockChatModel,
             McpToolProvider repoToolProvider) {
 
         return AiServices.builder(MentorBot.class)
-                .chatModel(gemini)
+                .chatModel(bedrockChatModel)
                 .toolProvider(repoToolProvider)
                 .build();
     }
 
     @Bean
     public NotesGenerationBot notesBot(
-            @Qualifier("gemini2") ChatModel gemini2,
+            @Qualifier("bedrockChatModel") ChatModel bedrockChatModel,
             McpToolProvider repoToolProvider) {
 
         return AiServices.builder(NotesGenerationBot.class)
-                .chatModel(gemini2)
+                .chatModel(bedrockChatModel)
                 .toolProvider(repoToolProvider)
                 .build();
     }

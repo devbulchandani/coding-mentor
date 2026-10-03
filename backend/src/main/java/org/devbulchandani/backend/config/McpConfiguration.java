@@ -8,13 +8,15 @@ import dev.langchain4j.mcp.client.transport.McpTransport;
 import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class McpConfiguration {
     @Bean
-    public McpTransport repoMcpTransport() {
+    public McpTransport repoMcpTransport(
+            @Value("${app.mcp.repo-url:http://localhost:8081/mcp}") String repoMcpUrl) {
         return StreamableHttpMcpTransport.builder()
-                .url("https://buildspace-repo-analyzer-985437920499.asia-south1.run.app/mcp")
+                .url(repoMcpUrl)
                 .logRequests(true)
                 .logResponses(true)
                 .build();

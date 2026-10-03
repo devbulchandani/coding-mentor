@@ -18,19 +18,19 @@ import java.util.List;
 
 @Service
 public class NotesGenerationService {
-    private final ChatModel gemini2;
+    private final ChatModel bedrockChatModel;
     private final MilestoneRepository milestoneRepo;
     private final MilestoneNotesRepository noteRepo;
     private final LearningContextService learningContextService;
     private final MilestoneContextService milestoneContextService;
 
-    public NotesGenerationService(@Qualifier("gemini2") ChatModel gemini2,
+    public NotesGenerationService(@Qualifier("bedrockChatModel") ChatModel bedrockChatModel,
                                   NotesGenerationBot notesGeneratorBot,
                                   MilestoneRepository milestoneRepo,
                                   MilestoneNotesRepository noteRepo,
                                   LearningContextService learningContextService,
                                   MilestoneContextService milestoneContextService) {
-        this.gemini2 = gemini2;
+        this.bedrockChatModel = bedrockChatModel;
         this.milestoneRepo = milestoneRepo;
         this.noteRepo = noteRepo;
         this.learningContextService = learningContextService;
@@ -56,7 +56,7 @@ public class NotesGenerationService {
 
         try {
             String prompt = buildNotesPrompt(milestone, event.repoUrl());
-            String markdownResponse = gemini2.chat(prompt);
+            String markdownResponse = bedrockChatModel.chat(prompt);
 
             note.setMarkdownContent(markdownResponse);
             note.setStatus(NotesStatus.COMPLETED);
