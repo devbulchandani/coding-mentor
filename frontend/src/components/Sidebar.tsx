@@ -6,6 +6,7 @@ import { cn } from '../lib/utils';
 import useAppStore from '../hooks/useAppStore';
 import PlanSelectorModal from './PlanSelectorModal';
 import LiveMentor from './LiveMentor';
+import BrandLogo from './BrandLogo';
 
 interface SidebarProps { open: boolean; onClose: () => void; }
 interface SidebarItemProps { icon: LucideIcon; label: string; to: string; onClick?: () => void; }
@@ -43,7 +44,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
 
     return <>
         <aside className="fixed bottom-0 left-0 top-16 z-30 hidden w-[260px] flex-col overflow-y-auto border-r border-slate-200/80 bg-[#fbfcff] lg:flex">{contents}</aside>
-        {open && <div className="fixed inset-0 z-50 lg:hidden" role="presentation"><button aria-label="Close navigation" onClick={onClose} className="absolute inset-0 bg-slate-950/30 backdrop-blur-[2px]" /><aside className="absolute bottom-0 left-0 top-0 flex w-[min(310px,88vw)] flex-col overflow-y-auto border-r border-slate-200 bg-[#fbfcff] shadow-2xl"><div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-5"><span className="font-[Manrope] text-sm font-extrabold">Buildspace<span className="text-indigo-600">.</span></span><button onClick={onClose} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X className="h-5 w-5" /></button></div>{contents}</aside></div>}
+        {open && <div className="fixed inset-0 z-50 lg:hidden" role="presentation"><button aria-label="Close navigation" onClick={onClose} className="absolute inset-0 bg-slate-950/30 backdrop-blur-[2px]" /><aside className="absolute bottom-0 left-0 top-0 flex w-[min(310px,88vw)] flex-col overflow-y-auto border-r border-slate-200 bg-[#fbfcff] shadow-2xl"><div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-5"><BrandLogo iconClassName="h-7 w-7" /><button onClick={onClose} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X className="h-5 w-5" /></button></div>{contents}</aside></div>}
         <PlanSelectorModal isOpen={showPlanSelector} onClose={() => setShowPlanSelector(false)} />
     </>;
 };

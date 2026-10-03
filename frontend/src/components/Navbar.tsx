@@ -1,6 +1,7 @@
-import { Code2, LogOut, Menu } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAppStore from '../hooks/useAppStore';
+import BrandLogo from './BrandLogo';
 
 interface NavbarProps { onMenuClick: () => void; }
 
@@ -13,10 +14,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
         <div className="mx-auto flex h-full max-w-[1600px] items-center justify-between px-4 sm:px-6">
             <div className="flex items-center gap-3">
                 <button onClick={onMenuClick} className="-ml-2 rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden" aria-label="Open navigation"><Menu className="h-5 w-5" /></button>
-                <Link to="/dashboard" className="flex items-center gap-2.5">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"><Code2 className="h-[18px] w-[18px]" strokeWidth={2.3} /></span>
-                    <span className="font-[Manrope] text-[15px] font-extrabold tracking-tight text-slate-900">Buildspace<span className="text-indigo-600">.</span></span>
-                </Link>
+                <Link to="/dashboard" aria-label="Buildspace home"><BrandLogo iconClassName="h-8 w-8" /></Link>
             </div>
             <div className="flex items-center gap-3">
                 <div className="hidden items-center gap-2.5 sm:flex">
