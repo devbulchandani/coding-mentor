@@ -1,7 +1,9 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
+
+const apiOrigin = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:8080' : '');
 
 const axiosClient: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    baseURL: `${apiOrigin}/api`,
     headers: {
         'Content-Type': 'application/json',
     },

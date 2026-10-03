@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, Book, Clock, Target, CheckCircle2, Loader2, CodeSquareIcon } from 'lucide-react';
 import { planApi } from '../api/planApi';
 import { getErrorMessage } from '../api/errorHandler';
@@ -13,32 +13,32 @@ interface PlanCardProps {
 
 const PlanCard = ({ plan, isSelected, onSelect }: PlanCardProps) => {
     return (
-        <div
+        <button type="button"
             onClick={() => onSelect(plan)}
-            className={`relative p-4 rounded-lg border-2 cursor-pointer transition-all transform hover:scale-[1.02] ${
+            className={`relative w-full rounded-2xl border p-4 text-left transition ${
                 isSelected
-                    ? 'border-sky-500 bg-sky-50 shadow-md'
-                    : 'border-slate-200 bg-white hover:border-sky-300 hover:shadow-sm'
+                    ? 'border-indigo-400 bg-indigo-50/70 ring-2 ring-indigo-500/10'
+                    : 'border-slate-200 bg-white hover:border-indigo-200 hover:bg-slate-50/60'
             }`}
         >
             {isSelected && (
-                <div className="absolute top-2 right-2 w-6 h-6 bg-sky-500 rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="w-4 h-4 text-white" />
+                <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
                 </div>
             )}
             
             <div className="flex items-start gap-3">
-                <div className={`p-2 rounded-lg ${isSelected ? 'bg-sky-100' : 'bg-slate-100'}`}>
-                    <Book className={`w-5 h-5 ${isSelected ? 'text-sky-600' : 'text-slate-600'}`} />
+                <div className={`rounded-xl p-2.5 ${isSelected ? 'bg-white' : 'bg-slate-100'}`}>
+                    <Book className={`h-5 w-5 ${isSelected ? 'text-indigo-600' : 'text-slate-500'}`} />
                 </div>
                 
                 <div className="flex-1">
-                    <h3 className="font-bold text-slate-800 mb-1">{plan.projectName}</h3>
-                    <p className="text-sm text-slate-600 mb-3 line-clamp-2">
+                    <h3 className="mb-1 pr-7 text-sm font-extrabold text-slate-900">{plan.projectName || plan.title}</h3>
+                    <p className="mb-3 line-clamp-2 text-xs leading-5 text-slate-500">
                         {plan.projectDescription || `Learn ${plan.tech}`}
                     </p>
                     
-                    <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] font-medium text-slate-500">
                         <div className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             <span>{plan.durationDays} days</span>
@@ -59,7 +59,7 @@ const PlanCard = ({ plan, isSelected, onSelect }: PlanCardProps) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </button>
     );
 };
 
@@ -75,13 +75,7 @@ const PlanSelectorModal = ({ isOpen, onClose }: PlanSelectorModalProps) => {
     const [error, setError] = useState('');
     const { currentPlan, setCurrentPlan, setMilestones, setRepoUrl } = useAppStore();
 
-    useEffect(() => {
-        if (isOpen) {
-            fetchPlans();
-        }
-    }, [isOpen]);
-
-    const fetchPlans = async () => {
+    const fetchPlans = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
@@ -92,6 +86,7 @@ const PlanSelectorModal = ({ isOpen, onClose }: PlanSelectorModalProps) => {
             if (currentPlan) {
                 const current = data.find(p => p.id === currentPlan.id);
                 if (current) setSelectedPlan(current);
+                else setSelectedPlan(null);
             }
         } catch (err) {
             console.error('Failed to fetch plans:', err);
@@ -99,7 +94,11 @@ const PlanSelectorModal = ({ isOpen, onClose }: PlanSelectorModalProps) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPlan]);
+
+    useEffect(() => {
+        if (isOpen) fetchPlans();
+    }, [isOpen, fetchPlans]);
 
     const handleSelectPlan = () => {
         if (selectedPlan) {
@@ -120,33 +119,34 @@ const PlanSelectorModal = ({ isOpen, onClose }: PlanSelectorModalProps) => {
     if (!isOpen) return null;
 
     return (
-        <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        <div role="presentation"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/35 p-3 backdrop-blur-[3px] sm:p-5"
             onClick={onClose}
         >
-            <div 
-                className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col"
+            <div role="dialog" aria-modal="true" aria-labelledby="plan-selector-title"
+                className="flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-white/50 bg-white shadow-2xl shadow-slate-950/20"
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 sm:px-6 sm:py-5">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800">Select Learning Plan</h2>
-                        <p className="text-sm text-slate-500 mt-1">Choose a plan to continue your learning journey</p>
+                        <h2 id="plan-selector-title" className="text-lg font-extrabold text-slate-900">Choose a learning plan</h2>
+                        <p className="mt-1 text-xs text-slate-500">Pick up where you left off.</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        aria-label="Close dialog"
+                        className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
                     >
                         <X className="w-5 h-5 text-slate-500" />
                     </button>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto p-6">
+                <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-5">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-12">
-                            <Loader2 className="w-8 h-8 text-sky-500 animate-spin mb-3" />
+                            <Loader2 className="mb-3 h-7 w-7 animate-spin text-indigo-600" />
                             <p className="text-slate-500">Loading your plans...</p>
                         </div>
                     ) : error ? (
@@ -174,17 +174,17 @@ const PlanSelectorModal = ({ isOpen, onClose }: PlanSelectorModalProps) => {
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-200 bg-slate-50">
+                <div className="flex items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/70 p-4 sm:px-5">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors"
+                        className="button-secondary py-2"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSelectPlan}
                         disabled={!selectedPlan || loading}
-                        className="px-6 py-2 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-lg shadow-md transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        className="button-primary py-2"
                     >
                         Select Plan
                     </button>

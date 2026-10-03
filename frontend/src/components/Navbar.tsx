@@ -1,90 +1,33 @@
-import { Home, Book, MessageCircle, LogOut, Code } from 'lucide-react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { LucideIcon } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { Code2, LogOut, Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import useAppStore from '../hooks/useAppStore';
 
-interface NavItemProps {
-    icon: LucideIcon;
-    label: string;
-    to: string;
-}
+interface NavbarProps { onMenuClick: () => void; }
 
-const NavItem = ({ icon: Icon, label, to }: NavItemProps) => (
-    <NavLink
-        to={to}
-        className={({ isActive }) => cn(
-            "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-t-md border-b-2 transition-all",
-            "text-slate-600 hover:text-slate-900",
-            isActive
-                ? "border-secondary text-slate-900 bg-slate-50"
-                : "border-transparent hover:border-slate-300"
-        )}
-    >
-        <Icon className="w-4 h-4" />
-        <span>{label}</span>
-    </NavLink>
-);
-
-const Navbar = () => {
+const Navbar = ({ onMenuClick }: NavbarProps) => {
     const { user, logout } = useAppStore();
-    console.log("User:", user);
     const navigate = useNavigate();
+    const handleLogout = () => { logout(); navigate('/login'); };
 
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
-
-    return (
-        <header className="h-16 fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 z-30 flex items-center justify-between px-6">
-            <div className="flex items-center gap-8">
-                <Link to="/" className="flex items-center gap-2 group">
-                    <div className="bg-sky-100 p-1.5 rounded-lg text-sky-600 group-hover:scale-105 transition-transform">
-                        <Code className="w-5 h-5" />
-                    </div>
-                    <span className="font-bold text-lg text-slate-800 group-hover:text-primary transition-colors">
-                        Buildspace AI <span className="text-secondary">&lt;/&gt;</span>
-                    </span>
+    return <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-full max-w-[1600px] items-center justify-between px-4 sm:px-6">
+            <div className="flex items-center gap-3">
+                <button onClick={onMenuClick} className="-ml-2 rounded-lg p-2 text-slate-600 hover:bg-slate-100 lg:hidden" aria-label="Open navigation"><Menu className="h-5 w-5" /></button>
+                <Link to="/dashboard" className="flex items-center gap-2.5">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/20"><Code2 className="h-[18px] w-[18px]" strokeWidth={2.3} /></span>
+                    <span className="font-[Manrope] text-[15px] font-extrabold tracking-tight text-slate-900">Buildspace<span className="text-indigo-600">.</span></span>
                 </Link>
-
-                {user && (
-                    <nav className="flex items-center gap-2 h-full pt-1">
-                        <NavItem icon={Home} label="Dashboard" to="/dashboard" />
-                        <NavItem icon={Book} label="Create Plans" to="/plans" />
-                        <NavItem icon={MessageCircle} label="Mentor Chat" to="/chat" />
-                    </nav>
-                )}
             </div>
-
-            <div className="flex items-center gap-4">
-                {user ? (
-                    <>
-                        <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-                            <div className="flex flex-col text-right hidden sm:block">
-                                <span className="text-sm font-semibold text-slate-700">{user.name}</span>
-                            </div>
-                            <div className="w-9 h-9 bg-gradient-to-br from-sky-400 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold shadow-sm ring-2 ring-white">
-                                {user.name[0].toUpperCase() || "U"}
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={handleLogout}
-                            className="p-2 text-slate-500 hover:text-coral-500 hover:bg-coral-50 rounded-md transition-colors"
-                            title="Logout"
-                        >
-                            <LogOut className="w-4 h-4" />
-                        </button>
-                    </>
-                ) : (
-                    <Link to="/login" className="text-sm font-medium text-slate-600 hover:text-sky-600">
-                        Sign In
-                    </Link>
-                )}
+            <div className="flex items-center gap-3">
+                <div className="hidden items-center gap-2.5 sm:flex">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-700 ring-1 ring-indigo-100">{(user?.name || 'U').charAt(0).toUpperCase()}</div>
+                    <div className="hidden min-w-0 md:block"><p className="max-w-40 truncate text-sm font-semibold leading-4 text-slate-800">{user?.name || 'Developer'}</p><p className="mt-1 text-[11px] leading-3 text-slate-400">Your workspace</p></div>
+                </div>
+                <span className="hidden h-7 w-px bg-slate-200 sm:block" />
+                <button onClick={handleLogout} className="inline-flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-900" title="Sign out"><LogOut className="h-4 w-4" /><span className="hidden sm:inline">Sign out</span></button>
             </div>
-        </header>
-    );
+        </div>
+    </header>;
 };
 
 export default Navbar;

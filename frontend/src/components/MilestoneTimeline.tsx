@@ -1,123 +1,36 @@
-import { Circle, Disc, Lock, CheckCircle2 } from 'lucide-react';
+import { Circle, LockKeyhole, Check, ArrowRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { LucideIcon } from 'lucide-react';
 import useAppStore from '../hooks/useAppStore';
+import { Milestone } from '../types';
 
-type MilestoneStatus = 'COMPLETED' | 'IN_PROGRESS' | 'LOCKED';
-
-interface MilestoneItemProps {
-    id: number;
-    sequenceNumber: number;
-    title: string;
-    status: MilestoneStatus;
-    isLast: boolean;
-}
-
-interface StatusStyles {
-    icon: LucideIcon;
-    color: string;
-    bg: string;
-    border: string;
-}
-
-const MilestoneItem = ({ id, sequenceNumber, title, status, isLast }: MilestoneItemProps) => {
-    const navigate = useNavigate();
-
-    // Status styles
-    const styles: Record<MilestoneStatus, StatusStyles> = {
-        COMPLETED: { icon: CheckCircle2, color: "text-mint-500", bg: "bg-mint-50", border: "border-mint-200" },
-        IN_PROGRESS: { icon: Disc, color: "text-yellow-500 animate-pulse", bg: "bg-yellow-50", border: "border-yellow-200" },
-        LOCKED: { icon: Lock, color: "text-slate-400", bg: "bg-slate-50", border: "border-slate-200" }
-    };
-
-    const style = styles[status];
-    const Icon = style.icon;
-
-    // Determine connector line color based on current milestone status
-    const getConnectorColor = () => {
-        if (status === 'COMPLETED') {
-            return 'bg-emerald-400';
-        } else if (status === 'IN_PROGRESS') {
-            return 'bg-gradient-to-b from-yellow-400 to-slate-200';
-        }
-        return 'bg-slate-200';
-    };
-
-    return (
-        <div className="relative group pl-8 pb-8 last:pb-0">
-            {!isLast && (
-                <div className={`absolute left-[11px] top-8 bottom-0 w-0.5 transition-all ${getConnectorColor()}`} />
-            )}
-
-            <div className={`absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center bg-white border-2 z-10 transition-all ${status === 'COMPLETED' ? 'border-mint-500 shadow-md shadow-mint-200' : status === 'IN_PROGRESS' ? 'border-yellow-400 shadow-md shadow-yellow-200' : 'border-slate-300'}`}>
-                <Icon className={`w-3.5 h-3.5 ${style.color}`} />
-            </div>
-
-            <div
-                onClick={() => navigate(`/milestone/${id}`)}
-                className={`flex items-center justify-between p-4 rounded-lg border ${style.border} ${style.bg} hover:shadow-md transition-all cursor-pointer transform hover:-translate-y-0.5`}
-            >
-                <span className={`font-semibold ${status === 'LOCKED' ? 'text-slate-500' : 'text-slate-800'}`}>
-                    Milestone {sequenceNumber}: {title}
-                </span>
-                <div className="text-xs font-medium px-2 py-1 rounded bg-white/50 border border-black/5 text-slate-500">
-                    {status.replace('_', ' ')}
-                </div>
-            </div>
-        </div>
-    );
-};
-
+type MilestoneState = 'completed' | 'active' | 'locked';
 const MilestoneTimeline = () => {
     const { milestones } = useAppStore();
+    const navigate = useNavigate();
+    if (!milestones?.length) return <section className="surface p-8 text-center sm:p-12"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600"><Sparkles className="h-5 w-5" /></div><h2 className="mt-4 text-lg font-bold text-slate-900">Your roadmap will appear here</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">Create a learning plan to get a sequence of practical milestones tailored to your goals.</p></section>;
 
-    // If no milestones, show placeholder
-    if (!milestones || milestones.length === 0) {
-        return (
-            <div className="mb-8">
-                <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 pl-1">Project Roadmap</h3>
-                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                    <p className="text-slate-500 text-center py-8">
-                        Create a learning plan to see your roadmap
-                    </p>
-                </div>
-            </div>
-        );
-    }
+    const firstIncompleteIndex = milestones.findIndex((milestone) => !milestone.completed);
+    const completed = milestones.filter((milestone) => milestone.completed).length;
+    const roadmap = milestones.map((milestone: Milestone, index): Milestone & { state: MilestoneState } => ({
+        ...milestone,
+        state: milestone.completed ? 'completed' : index === firstIncompleteIndex ? 'active' : 'locked'
+    }));
 
-    const firstIncompleteIndex = milestones.findIndex(m => !m.completed);
-    
-    const displayMilestones = milestones.map((m, index) => {
-        if (m.completed) {
-            return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'COMPLETED' as MilestoneStatus };
-        }
-        
-        const previousMilestone = index > 0 ? milestones[index - 1] : null;
-        const isPreviousCompleted = !previousMilestone || previousMilestone.completed;
-        
-        if (index === firstIncompleteIndex && isPreviousCompleted) {
-            return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'IN_PROGRESS' as MilestoneStatus };
-        }
-        
-        return { id: m.id, sequenceNumber: m.sequenceNumber, title: m.title, status: 'LOCKED' as MilestoneStatus };
-    });
-
-    return (
-        <div className="mb-8">
-            <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 pl-1">Project Roadmap</h3>
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                <div className="max-w-3xl">
-                    {displayMilestones.map((m, i) => (
-                        <MilestoneItem
-                            key={m.id}
-                            {...m}
-                            isLast={i === displayMilestones.length - 1}
-                        />
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
+    return <section>
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">The path ahead</p><h2 className="mt-1 text-xl font-extrabold tracking-tight text-slate-900">Your roadmap</h2></div><span className="text-xs font-semibold text-slate-500">{completed} / {milestones.length} milestones complete</span></div>
+        <div className="surface overflow-hidden"><div className="divide-y divide-slate-100">
+            {roadmap.map((milestone, index) => {
+                const Icon = milestone.state === 'completed' ? Check : milestone.state === 'active' ? Circle : LockKeyhole;
+                const available = milestone.state !== 'locked';
+                return <button key={milestone.id} onClick={() => navigate(`/milestone/${milestone.id}`)} disabled={!available} className={`group relative flex w-full items-start gap-4 px-5 py-5 text-left transition sm:px-6 ${available ? 'hover:bg-slate-50/80' : 'cursor-not-allowed opacity-55'}`}>
+                    <span className={`relative z-10 mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${milestone.state === 'completed' ? 'bg-emerald-50 text-emerald-600' : milestone.state === 'active' ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/20' : 'bg-slate-100 text-slate-400'}`}><Icon className="h-4 w-4" strokeWidth={2.2} /></span>
+                    {index < roadmap.length - 1 && <span className="absolute bottom-[-1px] left-[42px] top-[58px] w-px bg-slate-200" />}
+                    <span className="min-w-0 flex-1"><span className="flex flex-wrap items-center gap-x-2 gap-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Step {milestone.sequenceNumber || index + 1}</span><span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${milestone.state === 'completed' ? 'bg-emerald-50 text-emerald-700' : milestone.state === 'active' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-500'}`}>{milestone.state === 'active' ? 'Up next' : milestone.state}</span></span><span className="mt-1 block truncate text-sm font-bold text-slate-800">{milestone.title}</span>{milestone.description && <span className="mt-1 line-clamp-2 block text-xs leading-5 text-slate-500">{milestone.description}</span>}</span>
+                    {available && <ArrowRight className="mt-2 h-4 w-4 shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-600" />}
+                </button>;
+            })}
+        </div></div>
+    </section>;
 };
 
 export default MilestoneTimeline;

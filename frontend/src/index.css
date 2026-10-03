@@ -1,46 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 5% 96%; /* Warm White-ish */
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 199 89% 48%; /* Sky Blue #0EA5E9 */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 346 90% 60%; /* Coral ish */
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 262 83% 58%; /* Lavenderish */
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --background: 220 24% 97%; --foreground: 222 32% 13%;
+    --card: 0 0% 100%; --card-foreground: 222 32% 13%;
+    --popover: 0 0% 100%; --popover-foreground: 222 32% 13%;
+    --primary: 244 69% 58%; --primary-foreground: 0 0% 100%;
+    --secondary: 220 18% 94%; --secondary-foreground: 222 32% 18%;
+    --muted: 220 20% 95%; --muted-foreground: 220 10% 47%;
+    --accent: 244 69% 95%; --accent-foreground: 244 69% 42%;
+    --destructive: 0 72% 52%; --destructive-foreground: 0 0% 100%;
+    --border: 220 16% 89%; --input: 220 16% 89%; --ring: 244 69% 58%; --radius: 0.85rem;
   }
+  * { @apply border-border; }
+  html { min-width: 320px; scroll-behavior: smooth; }
+  body { @apply bg-background text-foreground antialiased; font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif; font-feature-settings: 'ss01' on; }
+  h1, h2, h3, h4 { font-family: 'Manrope', 'DM Sans', ui-sans-serif, system-ui, sans-serif; }
+  button, input, textarea, select { font: inherit; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid hsl(var(--ring) / 35%); outline-offset: 2px; }
+  ::selection { background: hsl(var(--primary) / 15%); }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+@layer components {
+  .surface { @apply rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_10px_rgba(15,23,42,0.035)]; }
+  .page-heading { @apply text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl; }
+  .eyebrow { @apply text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400; }
+  .button-primary { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/15 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50; }
+  .button-secondary { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50; }
+  .field { @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10; }
 }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
